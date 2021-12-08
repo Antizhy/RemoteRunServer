@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>控制台</title>
+</head>
+
+<body>
+    <style>
+
+        body {
+            text-align: center;
+            background-color: #282c34;
+        }
+
+        .headline {
+            color: #61afef;
+        }
+
+        .input-box {
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            border-bottom: solid 2px #3b424d;
+            font-size: 18px;
+            outline: none;
+            background-color: transparent;
+            margin-left: 5px;
+            color: #61afef;
+            width: 300px;
+            transition: all 0.2s ease-out 0s;
+        }
+
+        .input-box:hover {
+            border-bottom: solid 2px #61afef;
+        }
+
+        .input-box:focus {
+            border-bottom: solid 2px #a7d7ff;
+            color: #a7d7ff;
+        }
+
+        input.input-box::-webkit-input-placeholder {
+            color: #3b424d;
+            font-size: 15px;
+        }
+
+        .input-area {
+            margin-top: 5px;
+
+        }
+
+        .input-area span {
+            color: #61afef;
+        }
+
+        .output {
+            border: solid 2px #61afef;
+            width: 330px;
+            height: 400px;
+            outline: none;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: transparent;
+            padding: 5px;
+            color: #61afef;
+            resize: none;
+        }
+
+        textarea.output::-webkit-input-placeholder {
+            color: #3b424d;
+            padding-left: 5px;
+            font-size: 14px;
+        }
+
+        .button {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background: transparent;
+            color: #61afef;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            border: #61afef solid 1px;
+            transition: all 0.2s ease-out 0s;
+            outline: none;
+        }
+
+        .active {
+            background: #61afef;
+            color: #fff;
+        }
+
+        .button:hover {
+            border-color: #a7d7ff;
+            cursor: pointer;
+        }
+
+        .button:active {
+            background: #61afef;
+            color: #ffffff;
+        }
+
+        footer span {
+            color: #5a6374;
+        }
+
+        .pd {
+            color: #3b424d;
+        }
+
+        a.link {
+            color: #5a6374;
+            text-decoration: none;
+            transition: all 0.2s ease-out 0s;
+        }
+
+        a.link:hover {
+            color: #61afef !important;
+        }
+
+        a.link:visited {
+            color: #5a6374;
+        }
+
+        a.link:active {
+            color: #a7d7ff !important;
+        }
+        span {
+            color: #61afef;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .input {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            background: transparent;
+            color: #61afef;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            border: #61afef solid 1px;
+            transition: all 0.2s ease-out 0s;
+            outline: none;
+        }
+        .input:focus {
+            border-color: #a7d7ff;
+            color: #a7d7ff;
+        }
+
+        .disabled {
+            background: #f0717820;
+        }
+
+    </style>
+    <h1 class="headline">控制台</h1>
+
+    <div class="input-area">
+        <span>ip:port</span>
+        <input id="con-ip" class="input" value="127.0.0.1:8088"/>
+    </div>
+    <div class="input-area">
+        <button id="con-btn" class="button">连接</button>
+        <button id="run-btn" class="button disabled" disabled>执行</button>
+        <button id="exit-btn" class="button disabled" disabled>退出</button>
+    </div>
+    <footer>
+        <span class="pd">Pure Design</span>
+        <br>
+        <span>2021 <a href="https://www.lollipopnougat.top" class="link">lollipopnougat</a></span>
+    </footer>
+    <script>
+        let ip = '127.0.0.1:8088';
+        //ip = prompt('请输入ip:端口', '127.0.0.1:8088');
+
+        let ws;
+        let isRunning = false;
+        let con = document.getElementById('con-btn');
+        let exit_btn = document.getElementById('exit-btn');
+        let run_btn = document.getElementById('run-btn');
+        let con_ip = document.getElementById('con-ip');
+        con.onclick = () => {
+            ip = con_ip.value;
+            if(!ip.match(/^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?):\d+$/))
+            {
+                alert('错误ip地址!');
+                return;
+                ip = '127.0.0.1:8088';
+            }
+            if (isRunning) {
+                ws.close();
+            } else {
+                ws = new WebSocket(`ws://${ip}`);
+                ws.onmessage = (evt) => {
+                    if (evt.data == '/ok') {
+                        alert('操作成功');
+                    } else {
+                        alert(evt.data);
+                    }
+                };
+                ws.onopen = () => {
+                    ws.send('/client');
+                    con.innerText = "断开连接";
+                    isRunning = true;
+                    run_btn.disabled = '';
+                    exit_btn.disabled = '';
+                    run_btn.className = 'button';
+                    exit_btn.className = 'button';
+                    con.className = 'button active';
+                };
+                ws.onclose = () => {
+                    con.innerText = "连接";
+                    isRunning = false;
+                    alert('已经断开连接');
+                    run_btn.disabled = true;
+                    exit_btn.disabled = true;
+                    run_btn.className = 'disabled button';
+                    exit_btn.className = 'disabled button';
+                    con.className = 'button';
+                };
+            }
+
+        }
+
+        exit_btn.onclick = () => {
+            ws.send('/exit');
+        }
+
+        run_btn.onclick = () => {
+            //console.log('run');
+            ws.send('/run');
+        }
+    </script>
+
+</body>
+
+</html>

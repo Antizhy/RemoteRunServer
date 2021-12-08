@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "short-uuid": "^4.2.0",
+    "ws": "^8.2.2"
+  },
+  "name": "antizhy",
+  "version": "1.0.0",
+  "description": "...",
+  "main": "index.js",
+  "devDependencies": {
+    "@types/ws": "^7.4.7",
+    "typescript": "^4.4.3"
+  },
+  "scripts": {
+    "dev": "tsc && node index.js"
+  },
+  "author": "antizhy",
+  "license": "MIT"
+}
