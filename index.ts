@@ -115,6 +115,17 @@ wss.on('connection', (ws) => {
             corlorLog(`[SERVER] {}has recognised control client [${uid}].{}`, CYAN);
             ws.send('/ok');
         }
+        else if(mess[0] == '/hide') {
+            let res = wsend('/hide');
+            let tmp;
+            if (res == 0) {
+                tmp = `服务器向 远程执行客户端 发送 /hide`;
+            }
+            else {
+                tmp = '发送失败，远程执行客户端 未连接!';
+            }
+            ws.send(tmp);
+        }
         else if(mess[0] == '/info')
         {
             //console.log(`[SERVER]${message.toString()}`)

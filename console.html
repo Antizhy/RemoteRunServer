@@ -164,6 +164,7 @@
     <div class="input-area">
         <button id="con-btn" class="button">连接</button>
         <button id="run-btn" class="button disabled" disabled>执行</button>
+        <button id="swt-btn" class="button disabled" disabled>黑屏</button>
         <button id="exit-btn" class="button disabled" disabled>退出</button>
     </div>
     <footer>
@@ -180,6 +181,7 @@
         let con = document.getElementById('con-btn');
         let exit_btn = document.getElementById('exit-btn');
         let run_btn = document.getElementById('run-btn');
+        let swt_btn = document.getElementById('swt-btn');
         let con_ip = document.getElementById('con-ip');
         con.onclick = () => {
             ip = con_ip.value;
@@ -196,7 +198,8 @@
                 ws.onmessage = (evt) => {
                     if (evt.data == '/ok') {
                         alert('操作成功');
-                    } else {
+                    } 
+                    else {
                         alert(evt.data);
                     }
                 };
@@ -206,8 +209,10 @@
                     isRunning = true;
                     run_btn.disabled = '';
                     exit_btn.disabled = '';
+                    swt_btn.disabled = '';
                     run_btn.className = 'button';
                     exit_btn.className = 'button';
+                    swt_btn.className = 'button';
                     con.className = 'button active';
                 };
                 ws.onclose = () => {
@@ -216,8 +221,10 @@
                     alert('已经断开连接');
                     run_btn.disabled = true;
                     exit_btn.disabled = true;
+                    swt_btn.disabled = true;
                     run_btn.className = 'disabled button';
                     exit_btn.className = 'disabled button';
+                    swt_btn.className = 'disabled button';
                     con.className = 'button';
                 };
             }
@@ -232,6 +239,10 @@
             //console.log('run');
             ws.send('/run');
         }
+
+        swt_btn.onclick = () => {
+            ws.send('/hide');
+        };
     </script>
 
 </body>
